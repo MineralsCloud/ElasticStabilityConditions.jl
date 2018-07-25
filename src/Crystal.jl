@@ -14,7 +14,11 @@ julia>
 module Crystal
 
 struct CrystalSystem
-    elastic_matrix::Base.Matrix
+    elastic_matrix::Matrix
+end
+
+function compliance_matrix(m::CrystalSystem)
+    return inv(m)
 end
 
 

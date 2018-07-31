@@ -13,6 +13,10 @@ julia>
 """
 module Crystal
 
+abstract type CrystalSystem end
+abstract type CubicSystem <: CrystalSystem end
+abstract type HexagonalSystem <: CrystalSystem end
+
 struct CrystalSystem
     elastic_matrix::Matrix
     CrystalSystem(elastic_matrix) = size(elastic_matrix) == (6, 6) ? new(elastic_matrix) : error("Size should be 6x6!")
@@ -34,13 +38,24 @@ stability_conditions(c::HexagonalSystem) = [
 ]
 
 satisfy_stability_conditions(c::CrystalSystem) = false
-function satisfy_stability_conditions(c::CubicSystem)
-    elastic_matrix = c.elastic_matrix
-    c11, c12, c44 = elastic_matrix[1, 1], elastic_matrix[1, 2], elastic_matrix[1, 4]
+function satisfy_stability_conditions(cub::CubicSystem)
+    c = cub.elastic_matrix
+    c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]
     criteria = [
-        c11 > c12,
+        c11 > abs(c12),
         c11 + 2 * c12 > 0,
         c44 > 0
+    ]
+    all(criteria)
+end
+function satisfy_stability_conditions(hex::HexagonalSystem)
+    c = hex.elastic_matrix
+    c11, c12, c13, c33, c44, c66 = c[1, 1], c[1, 2], c[1, 3], c[3, 3], c[4, 4], c[6, 6]
+    criteria = [
+        c11 > abs(c12),
+        2 * c13^2 < c33 * (c11 + c12),
+        c44 > 0,
+        c66 > 0
     ]
     all(criteria)
 end

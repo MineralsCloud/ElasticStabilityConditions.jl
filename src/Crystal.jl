@@ -33,5 +33,16 @@ stability_conditions(c::HexagonalSystem) = [
     "C_{66} > 0"
 ]
 
+satisfy_stability_conditions(c::CrystalSystem) = false
+function satisfy_stability_conditions(c::CubicSystem)
+    elastic_matrix = c.elastic_matrix
+    c11, c12, c44 = elastic_matrix[1, 1], elastic_matrix[1, 2], elastic_matrix[1, 4]
+    criteria = [
+        c11 > c12,
+        c11 + 2 * c12 > 0,
+        c44 > 0
+    ]
+    all(criteria)
+end
 
 end

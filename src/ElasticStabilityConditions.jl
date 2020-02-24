@@ -136,8 +136,8 @@ stability_conditions(::Hexagonal) = [
     "C_{66} > 0",
 ]
 
-satisfy_stability_conditions(::CrystalSystem) = false
-function satisfy_stability_conditions(cub::Cubic)
+isstable(::CrystalSystem) = false
+function isstable(cub::Cubic)
     c = cub.elastic_matrix
     c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]
     return all([  # Must satisfy all criteria!
@@ -146,7 +146,7 @@ function satisfy_stability_conditions(cub::Cubic)
         c44 > 0,
     ])
 end
-function satisfy_stability_conditions(hex::Hexagonal)
+function isstable(hex::Hexagonal)
     c = hex.elastic_matrix
     c11, c12, c13, c33, c44, c66 = c[1, 1], c[1, 2], c[1, 3], c[3, 3], c[4, 4], c[6, 6]
     return all([  # Must satisfy all criteria!

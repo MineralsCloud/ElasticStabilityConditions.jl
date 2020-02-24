@@ -13,32 +13,144 @@ julia>
 """
 module Crystal
 
-abstract type CrystalSystem end
-abstract type CubicSystem <: CrystalSystem end
-abstract type HexagonalSystem <: CrystalSystem end
+using Crystallography
+using StaticArrays: FieldVector, FieldMatrix, FieldArray
 
-struct CrystalSystem
-    elastic_matrix::Matrix
-    CrystalSystem(elastic_matrix) = size(elastic_matrix) == (6, 6) ? new(elastic_matrix) : error("Size should be 6x6!")
+struct TensorStress{T} <: FieldMatrix{3,3,T}
+    xx::T
+    yx::T
+    zx::T
+    xy::T
+    yy::T
+    zy::T
+    xz::T
+    yz::T
+    zz::T
 end
 
-compliance_matrix(c::CrystalSystem) = inv(c.elastic_matrix)
+struct TensorStrain{T} <: FieldMatrix{3,3,T}
+    xx::T
+    yx::T
+    zx::T
+    xy::T
+    yy::T
+    zy::T
+    xz::T
+    yz::T
+    zz::T
+end
+
+struct EngineeringStress{T} <: FieldVector{6,T}
+    xx::T
+    yy::T
+    zz::T
+    yz::T
+    xz::T
+    xy::T
+end
+
+struct EngineeringStrain{T} <: FieldVector{6,T}
+    xx::T
+    yy::T
+    zz::T
+    yz::T
+    xz::T
+    xy::T
+end
+
+struct Compliance{T} <: FieldMatrix{6,6,T}
+    xxxx::T
+    yyxx::T
+    zzxx::T
+    yzxx::T
+    xzxx::T
+    xyxx::T
+    xxyy::T
+    yyyy::T
+    zzyy::T
+    yzyy::T
+    xzyy::T
+    xyyy::T
+    xxzz::T
+    yyzz::T
+    zzzz::T
+    yzzz::T
+    xzzz::T
+    xyzz::T
+    xxyz::T
+    yyyz::T
+    zzyz::T
+    yzyz::T
+    xzyz::T
+    xyyz::T
+    xxxz::T
+    yyxz::T
+    zzxz::T
+    yzxz::T
+    xzxz::T
+    xyxz::T
+    xxxy::T
+    yyxy::T
+    zzxy::T
+    yzxy::T
+    xzxy::T
+    xyxy::T
+end
+
+struct Stiffness{T} <: FieldMatrix{6,6,T}
+    xxxx::T
+    yyxx::T
+    zzxx::T
+    yzxx::T
+    xzxx::T
+    xyxx::T
+    xxyy::T
+    yyyy::T
+    zzyy::T
+    yzyy::T
+    xzyy::T
+    xyyy::T
+    xxzz::T
+    yyzz::T
+    zzzz::T
+    yzzz::T
+    xzzz::T
+    xyzz::T
+    xxyz::T
+    yyyz::T
+    zzyz::T
+    yzyz::T
+    xzyz::T
+    xyyz::T
+    xxxz::T
+    yyxz::T
+    zzxz::T
+    yzxz::T
+    xzxz::T
+    xyxz::T
+    xxxy::T
+    yyxy::T
+    zzxy::T
+    yzxy::T
+    xzxy::T
+    xyxy::T
+end
 
 stability_conditions(c::CrystalSystem) = "No stability conditions defined for `$(typeof(c))!`"
-stability_conditions(c::CubicSystem) = [
+stability_conditions(::Cubic) = [
     "C_{11} > | C_{12} |",
     "C_{11} + 2 C_{12} > 0",
     "C_{44} > 0"
 ]
-stability_conditions(c::HexagonalSystem) = [
+stability_conditions(::Hexagonal) = [
     "C_{11} > | C_{12} |",
     "2 C_{13}^2 < C_{33} (C_{11} + C_{12})",
     "C_{44} > 0",
     "C_{66} > 0"
 ]
 
-satisfy_stability_conditions(c::CrystalSystem) = false
-function satisfy_stability_conditions(cub::CubicSystem)
+satisfy_stability_conditions(::CrystalSystem) = false
+function satisfy_stability_conditions(cub::Cubic)
     c = cub.elastic_matrix
     c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]
     criteria = [
@@ -48,7 +160,7 @@ function satisfy_stability_conditions(cub::CubicSystem)
     ]
     all(criteria)
 end
-function satisfy_stability_conditions(hex::HexagonalSystem)
+function satisfy_stability_conditions(hex::Hexagonal)
     c = hex.elastic_matrix
     c11, c12, c13, c33, c44, c66 = c[1, 1], c[1, 2], c[1, 3], c[3, 3], c[4, 4], c[6, 6]
     criteria = [

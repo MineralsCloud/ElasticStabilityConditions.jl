@@ -127,8 +127,6 @@ struct Stiffness{T} <: FieldMatrix{6,6,T}
     xyxy::T
 end
 
-stability_conditions(c::CrystalSystem) =
-    "No stability conditions defined for `$(typeof(c))!`"
 stability_conditions(::Cubic) =
     ["C_{11} > | C_{12} |", "C_{11} + 2 C_{12} > 0", "C_{44} > 0"]
 stability_conditions(::Hexagonal) = [
@@ -138,7 +136,6 @@ stability_conditions(::Hexagonal) = [
     "C_{66} > 0",
 ]
 
-isstable(::CrystalSystem) = false
 function isstable(cub::Cubic)
     c = cub.elastic_matrix
     c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]

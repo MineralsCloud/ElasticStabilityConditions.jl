@@ -136,40 +136,36 @@ struct Stiffness{T} <: FieldMatrix{6,6,T}
     xyxy::T
 end
 
-stability_conditions(c::CrystalSystem) = "No stability conditions defined for `$(typeof(c))!`"
-stability_conditions(::Cubic) = [
-    "C_{11} > | C_{12} |",
-    "C_{11} + 2 C_{12} > 0",
-    "C_{44} > 0"
-]
+stability_conditions(c::CrystalSystem) =
+    "No stability conditions defined for `$(typeof(c))!`"
+stability_conditions(::Cubic) =
+    ["C_{11} > | C_{12} |", "C_{11} + 2 C_{12} > 0", "C_{44} > 0"]
 stability_conditions(::Hexagonal) = [
     "C_{11} > | C_{12} |",
     "2 C_{13}^2 < C_{33} (C_{11} + C_{12})",
     "C_{44} > 0",
-    "C_{66} > 0"
+    "C_{66} > 0",
 ]
 
 satisfy_stability_conditions(::CrystalSystem) = false
 function satisfy_stability_conditions(cub::Cubic)
     c = cub.elastic_matrix
     c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]
-    criteria = [
+    return all([  # Must satisfy all criteria!
         c11 > abs(c12),
         c11 + 2 * c12 > 0,
-        c44 > 0
-    ]
-    all(criteria)
+        c44 > 0,
+    ])
 end
 function satisfy_stability_conditions(hex::Hexagonal)
     c = hex.elastic_matrix
     c11, c12, c13, c33, c44, c66 = c[1, 1], c[1, 2], c[1, 3], c[3, 3], c[4, 4], c[6, 6]
-    criteria = [
+    return all([  # Must satisfy all criteria!
         c11 > abs(c12),
         2 * c13^2 < c33 * (c11 + c12),
         c44 > 0,
-        c66 > 0
-    ]
-    all(criteria)
+        c66 > 0,
+    ])
 end
 
 Base.inv(c::Stiffness) = Compliance(inv(collect(c)))

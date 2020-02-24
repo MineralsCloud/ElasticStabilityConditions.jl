@@ -3,6 +3,11 @@ uuid = "8574d406-855f-413d-87b3-5ad9fb395e08"
 authors = ["Qi Zhang <singularitti@outlook.com>"]
 version = "0.1.0"
 
+[deps]
+Crystallography = "3bff3928-7a76-11e9-2089-d112443085a5"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
 [compat]
 julia = "1"
 

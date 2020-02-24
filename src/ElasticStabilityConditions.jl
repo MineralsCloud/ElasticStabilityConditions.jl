@@ -1,7 +1,9 @@
 module ElasticStabilityConditions
 
 using Crystallography
-using StaticArrays: FieldVector, FieldMatrix, FieldArray, SHermitianCompact
+using StaticArrays: FieldVector, FieldMatrix, FieldArray, SVector, SHermitianCompact
+
+export TensorStress, TensorStrain, EngineeringStress, EngineeringStrain, Compliance, Stiffness
 
 struct TensorStress{T} <: FieldMatrix{3,3,T}
     xx::T
@@ -156,13 +158,13 @@ function satisfy_stability_conditions(hex::Hexagonal)
 end
 
 function Base.convert(::Type{<:TensorStress}, s::EngineeringStress)
-    return TensorStress(SHermitianCompact(s.xx, s.xy, s.yy, s.xz, s.yz, s.zz))
+    return TensorStress(SHermitianCompact(SVector(s.xx, s.xy, s.xz, s.yy, s.yz, s.zz)))
 end # function Base.convert
 function Base.convert(::Type{<:EngineeringStress}, s::TensorStress)
     return EngineeringStress(s.xx, s.yy, s.zz, s.yz, s.xz, s.xy)
 end # function Base.convert
 function Base.convert(::Type{<:TensorStrain}, e::EngineeringStrain)
-    return TensorStress(SHermitianCompact(e.xx, e.xy, e.yy, e.xz, e.yz, e.zz))
+    return TensorStress(SHermitianCompact(SVector(e.xx, e.xy, e.xz, e.yy, e.yz, e.zz)))
 end # function Base.convert
 function Base.convert(::Type{<:EngineeringStrain}, e::TensorStrain)
     return EngineeringStress(e.xx, e.yy, e.zz, e.yz, e.xz, e.xy)

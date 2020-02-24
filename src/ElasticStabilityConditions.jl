@@ -9,8 +9,8 @@ export TensorStress,
     TensorCompliance,
     EngineeringStress,
     EngineeringStrain,
-    Compliance,
-    Stiffness
+    EngineeringCompliance,
+    EngineeringStiffness
 export stability_conditions, isstable
 
 struct TensorStress{T} <: FieldMatrix{3,3,T}
@@ -223,7 +223,7 @@ struct EngineeringStrain{T} <: FieldVector{6,T}
     xy::T
 end
 
-struct Compliance{T} <: FieldMatrix{6,6,T}
+struct EngineeringCompliance{T} <: FieldMatrix{6,6,T}
     xxxx::T
     yyxx::T
     zzxx::T
@@ -262,7 +262,7 @@ struct Compliance{T} <: FieldMatrix{6,6,T}
     xyxy::T
 end
 
-struct Stiffness{T} <: FieldMatrix{6,6,T}
+struct EngineeringStiffness{T} <: FieldMatrix{6,6,T}
     xxxx::T
     yyxx::T
     zzxx::T
@@ -310,7 +310,7 @@ stability_conditions(::Hexagonal) = [
     "C_{66} > 0",
 ]
 
-function isstable(::Cubic, c::Stiffness)
+function isstable(::Cubic, c::EngineeringStiffness)
     c11, c12, c44 = c[1, 1], c[1, 2], c[1, 4]
     return all([  # Must satisfy all criteria!
         c11 > abs(c12),
@@ -318,7 +318,7 @@ function isstable(::Cubic, c::Stiffness)
         c44 > 0,
     ])
 end
-function isstable(::Hexagonal, c::Stiffness)
+function isstable(::Hexagonal, c::EngineeringStiffness)
     c11, c12, c13, c33, c44, c66 = c[1, 1], c[1, 2], c[1, 3], c[3, 3], c[4, 4], c[6, 6]
     return all([  # Must satisfy all criteria!
         c11 > abs(c12),
@@ -327,7 +327,7 @@ function isstable(::Hexagonal, c::Stiffness)
         c66 > 0,
     ])
 end
-isstable(C::CrystalSystem, s::Compliance) = isstable(C, inv(s))
+isstable(C::CrystalSystem, s::EngineeringCompliance) = isstable(C, inv(s))
 
 function Base.convert(::Type{<:TensorStress}, s::EngineeringStress)
     return TensorStress(SHermitianCompact(SVector(s.xx, s.xy, s.xz, s.yy, s.yz, s.zz)))
@@ -349,7 +349,7 @@ function Base.convert(::Type{<:EngineeringStrain}, e::TensorStrain)
     return EngineeringStrain(e.xx, e.yy, e.zz, 2 * e.yz, 2 * e.xz, 2 * e.xy)
 end # function Base.convert
 
-Base.inv(c::Stiffness) = Compliance(inv(collect(c)))
-Base.inv(s::Compliance) = Stiffness(inv(collect(s)))
+Base.inv(c::EngineeringStiffness) = EngineeringCompliance(inv(collect(c)))
+Base.inv(s::EngineeringCompliance) = EngineeringStiffness(inv(collect(s)))
 
 end

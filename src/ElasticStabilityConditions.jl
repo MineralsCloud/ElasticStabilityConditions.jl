@@ -4,7 +4,13 @@ using Crystallography
 using StaticArrays: FieldVector, FieldMatrix, FieldArray, SVector, SHermitianCompact
 
 export TensorStress,
-    TensorStrain, EngineeringStress, EngineeringStrain, Compliance, Stiffness
+    TensorStrain,
+    TensorStiffness,
+    TensorCompliance,
+    EngineeringStress,
+    EngineeringStrain,
+    Compliance,
+    Stiffness
 export stability_conditions, isstable
 
 struct TensorStress{T} <: FieldMatrix{3,3,T}
@@ -29,6 +35,174 @@ struct TensorStrain{T} <: FieldMatrix{3,3,T}
     xz::T
     yz::T
     zz::T
+end
+
+struct TensorStiffness{T} <: FieldArray{Tuple{3,3,3,3},T,4}
+    xxxx::T
+    yxxx::T
+    zxxx::T
+    xyxx::T
+    yyxx::T
+    zyxx::T
+    xzxx::T
+    yzxx::T
+    zzxx::T
+    xxyx::T
+    yxyx::T
+    zxyx::T
+    xyyx::T
+    yyyx::T
+    zyyx::T
+    xzyx::T
+    yzyx::T
+    zzyx::T
+    xxzx::T
+    yxzx::T
+    zxzx::T
+    xyzx::T
+    yyzx::T
+    zyzx::T
+    xzzx::T
+    yzzx::T
+    zzzx::T
+    xxxy::T
+    yxxy::T
+    zxxy::T
+    xyxy::T
+    yyxy::T
+    zyxy::T
+    xzxy::T
+    yzxy::T
+    zzxy::T
+    xxyy::T
+    yxyy::T
+    zxyy::T
+    xyyy::T
+    yyyy::T
+    zyyy::T
+    xzyy::T
+    yzyy::T
+    zzyy::T
+    xxzy::T
+    yxzy::T
+    zxzy::T
+    xyzy::T
+    yyzy::T
+    zyzy::T
+    xzzy::T
+    yzzy::T
+    zzzy::T
+    xxxz::T
+    yxxz::T
+    zxxz::T
+    xyxz::T
+    yyxz::T
+    zyxz::T
+    xzxz::T
+    yzxz::T
+    zzxz::T
+    xxyz::T
+    yxyz::T
+    zxyz::T
+    xyyz::T
+    yyyz::T
+    zyyz::T
+    xzyz::T
+    yzyz::T
+    zzyz::T
+    xxzz::T
+    yxzz::T
+    zxzz::T
+    xyzz::T
+    yyzz::T
+    zyzz::T
+    xzzz::T
+    yzzz::T
+    zzzz::T
+end
+
+struct TensorCompliance{T} <: FieldArray{Tuple{3,3,3,3},T,4}
+    xxxx::T
+    yxxx::T
+    zxxx::T
+    xyxx::T
+    yyxx::T
+    zyxx::T
+    xzxx::T
+    yzxx::T
+    zzxx::T
+    xxyx::T
+    yxyx::T
+    zxyx::T
+    xyyx::T
+    yyyx::T
+    zyyx::T
+    xzyx::T
+    yzyx::T
+    zzyx::T
+    xxzx::T
+    yxzx::T
+    zxzx::T
+    xyzx::T
+    yyzx::T
+    zyzx::T
+    xzzx::T
+    yzzx::T
+    zzzx::T
+    xxxy::T
+    yxxy::T
+    zxxy::T
+    xyxy::T
+    yyxy::T
+    zyxy::T
+    xzxy::T
+    yzxy::T
+    zzxy::T
+    xxyy::T
+    yxyy::T
+    zxyy::T
+    xyyy::T
+    yyyy::T
+    zyyy::T
+    xzyy::T
+    yzyy::T
+    zzyy::T
+    xxzy::T
+    yxzy::T
+    zxzy::T
+    xyzy::T
+    yyzy::T
+    zyzy::T
+    xzzy::T
+    yzzy::T
+    zzzy::T
+    xxxz::T
+    yxxz::T
+    zxxz::T
+    xyxz::T
+    yyxz::T
+    zyxz::T
+    xzxz::T
+    yzxz::T
+    zzxz::T
+    xxyz::T
+    yxyz::T
+    zxyz::T
+    xyyz::T
+    yyyz::T
+    zyyz::T
+    xzyz::T
+    yzyz::T
+    zzyz::T
+    xxzz::T
+    yxzz::T
+    zxzz::T
+    xyzz::T
+    yyzz::T
+    zyzz::T
+    xzzz::T
+    yzzz::T
+    zzzz::T
 end
 
 struct EngineeringStress{T} <: FieldVector{6,T}

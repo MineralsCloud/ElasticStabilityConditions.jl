@@ -153,6 +153,7 @@ function isstable(::Hexagonal, c::Stiffness)
         c66 > 0,
     ])
 end
+isstable(C::CrystalSystem, s::Compliance) = isstable(C, inv(s))
 
 function Base.convert(::Type{<:TensorStress}, s::EngineeringStress)
     return TensorStress(SHermitianCompact(SVector(s.xx, s.xy, s.xz, s.yy, s.yz, s.zz)))

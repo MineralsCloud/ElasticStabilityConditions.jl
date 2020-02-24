@@ -172,4 +172,7 @@ function satisfy_stability_conditions(hex::Hexagonal)
     all(criteria)
 end
 
+Base.inv(c::Stiffness) = Compliance(inv(collect(c)))
+Base.inv(s::Compliance) = Stiffness(inv(collect(s)))
+
 end

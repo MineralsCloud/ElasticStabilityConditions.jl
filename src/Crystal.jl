@@ -14,7 +14,7 @@ julia>
 module Crystal
 
 using Crystallography
-using StaticArrays: FieldVector, FieldMatrix, FieldArray
+using StaticArrays: FieldVector, FieldMatrix, FieldArray, SHermitianCompact
 
 struct TensorStress{T} <: FieldMatrix{3,3,T}
     xx::T
@@ -167,6 +167,19 @@ function satisfy_stability_conditions(hex::Hexagonal)
         c66 > 0,
     ])
 end
+
+function Base.convert(::Type{<:TensorStress}, s::EngineeringStress)
+    return TensorStress(SHermitianCompact(s.xx, s.xy, s.yy, s.xz, s.yz, s.zz))
+end # function Base.convert
+function Base.convert(::Type{<:EngineeringStress}, s::TensorStress)
+    return EngineeringStress(s.xx, s.yy, s.zz, s.yz, s.xz, s.xy)
+end # function Base.convert
+function Base.convert(::Type{<:TensorStrain}, e::EngineeringStrain)
+    return TensorStress(SHermitianCompact(e.xx, e.xy, e.yy, e.xz, e.yz, e.zz))
+end # function Base.convert
+function Base.convert(::Type{<:EngineeringStrain}, e::TensorStrain)
+    return EngineeringStress(e.xx, e.yy, e.zz, e.yz, e.xz, e.xy)
+end # function Base.convert
 
 Base.inv(c::Stiffness) = Compliance(inv(collect(c)))
 Base.inv(s::Compliance) = Stiffness(inv(collect(s)))

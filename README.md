@@ -1,3 +1,5 @@
+[DEPRECATED] In favor of [LinearElasticity.jl](https://github.com/MineralsCloud/LinearElasticity.jl)
+
 # ElasticStabilityConditions.jl
 
 [![Build Status](https://github.com/MineralsCloud/ElasticStabilityConditions.jl/workflows/CI/badge.svg)](https://github.com/MineralsCloud/ElasticStabilityConditions.jl/actions)
